@@ -3,7 +3,7 @@ Caesium is a Java bytecode obfuscator that I wrote for fun and figured I'd make 
 
 Currently supported mutators
 * Control Flow
-* Crasher
+* Crasher (Will crash almost every GUI based RE tool)
 * Local Variable
 * Number
 * Reference (invokedynamics)
