@@ -4,7 +4,6 @@ import dev.sim0n.caesium.mutator.ClassMutator;
 import dev.sim0n.caesium.util.ASMUtil;
 import dev.sim0n.caesium.util.wrapper.impl.ClassWrapper;
 import dev.sim0n.caesium.util.wrapper.impl.MethodWrapper;
-import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.tree.*;
 
 public class NumberMutator extends ClassMutator {
