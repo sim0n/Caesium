@@ -15,5 +15,7 @@ Currently supported mutators
 `-I [input]` The input jar
 
 examples: 
+
 `java -jar caesium.jar -H`
+
 `java -jar caesium.jar -I test.jar`
