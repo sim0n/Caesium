@@ -107,12 +107,12 @@ public class StringMutator extends ClassMutator {
         char[] output = new char[chars.length];
 
         for (int i = 0; i < chars.length; i++) {
-            int key2 = randomKeys[i];
+            int key2 = i == 255 ? 12 : randomKeys[i & 255];
 
             output[i] = (char) (chars[i] ^ key ^ key2);
         }
 
-        return new String(output).intern();
+        return new String(output);
     }
 
     private void insertInitMethod(ClassNode target) {
