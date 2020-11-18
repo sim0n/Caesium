@@ -16,7 +16,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 @Getter
 public class Caesium {
-    public static final String VERSION = "1.0.0";
+    public static final String VERSION = "1.0.1";
 
     private static final String SEPARATOR = Strings.repeat("-", 30);
 
