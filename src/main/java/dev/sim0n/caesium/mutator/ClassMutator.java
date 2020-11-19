@@ -9,7 +9,7 @@ import org.objectweb.asm.Opcodes;
 import java.security.SecureRandom;
 
 public abstract class ClassMutator implements Opcodes, Finishable {
-    private final Caesium caesium = Caesium.getInstance();
+    protected final Caesium caesium = Caesium.getInstance();
     protected final Logger logger = Caesium.getLogger();
 
     protected final SecureRandom random = caesium.getRandom();

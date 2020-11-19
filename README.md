@@ -2,6 +2,7 @@
 Caesium is a Java bytecode obfuscator that I wrote for fun and figured I'd make public
 
 Currently supported mutators
+* Class Folder (Turns classes into folders)
 * Control Flow
 * Crasher (Will crash almost every GUI based RE tool)
 * Local Variable

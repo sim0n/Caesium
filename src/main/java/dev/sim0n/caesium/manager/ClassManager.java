@@ -3,17 +3,21 @@ package dev.sim0n.caesium.manager;
 import com.google.common.io.ByteStreams;
 import dev.sim0n.caesium.Caesium;
 import dev.sim0n.caesium.exception.CaesiumException;
+import dev.sim0n.caesium.mutator.impl.ClassFolderMutator;
 import dev.sim0n.caesium.mutator.impl.ImageCrashMutator;
 import dev.sim0n.caesium.util.ByteUtil;
 import dev.sim0n.caesium.util.wrapper.impl.ClassWrapper;
 import lombok.Getter;
 import org.apache.logging.log4j.Logger;
-import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.*;
 
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.IntStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -59,6 +63,9 @@ public class ClassManager {
     public void handleMutation() throws Exception {
         try (ZipOutputStream out = new ZipOutputStream(outputBuffer)) {
             Optional<ImageCrashMutator> imageCrashMutator = Optional.ofNullable(mutatorManager.getMutator(ImageCrashMutator.class));
+            Optional<ClassFolderMutator> classFolderMutator = Optional.ofNullable(mutatorManager.getMutator(ClassFolderMutator.class));
+
+            AtomicBoolean hideClasses = new AtomicBoolean(classFolderMutator.isPresent());
 
             imageCrashMutator.ifPresent(crasher -> {
                 ClassWrapper wrapper = crasher.getCrashClass();
@@ -70,8 +77,25 @@ public class ClassManager {
                 mutatorManager.handleMutation(node);
 
                 try {
+                    if (hideClasses.get()) // turn them into folders
+                        name += "/";
+
                     out.putNextEntry(new ZipEntry(name));
                     out.write(ByteUtil.getClassBytes(node.getNode()));
+
+                    if (hideClasses.get()) { // generate a bunch of fake classes
+                        String finalName = name;
+
+                        IntStream.range(0, 1 + caesium.getRandom().nextInt(10))
+                                .forEach(i -> {
+                                    try {
+                                        out.putNextEntry(new ZipEntry(String.format("%scaesium_%d.class", finalName, i ^ 27)));
+                                        out.write(new byte[] { 0 });
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                });
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -16,6 +16,8 @@ public class MutatorManager {
     private final List<ClassMutator> mutators = new ArrayList<>();
 
     public MutatorManager() {
+        mutators.add(new ClassFolderMutator());
+
         mutators.add(new ImageCrashMutator());
 
         mutators.add(new LocalVariableMutator());
