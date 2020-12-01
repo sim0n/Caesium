@@ -24,7 +24,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>dev.sim0n.caesium.Start</mainClass>
+                            <mainClass>dev.sim0n.caesium.gui.CGui</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
