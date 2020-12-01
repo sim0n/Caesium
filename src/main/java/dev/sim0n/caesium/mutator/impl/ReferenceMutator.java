@@ -10,10 +10,18 @@ import org.objectweb.asm.tree.*;
 import javax.xml.bind.DatatypeConverter;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.jar.Manifest;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+/**
+ * This hides method invocations with invokedynamics
+ */
 public class ReferenceMutator extends ClassMutator {
+    // 0 = light
+    // 1 = normal
+    private int type = 1;
+
     private int opcodeRandomKey;
     private int opcodeComparisonRandomKey;
 
@@ -27,9 +35,11 @@ public class ReferenceMutator extends ClassMutator {
 
     @Override
     public void handle(ClassWrapper wrapper) {
-        if (wrapper.getNode().version < V1_7) {
+        if (wrapper.node.version < V1_8)
             return;
-        }
+
+        if ((wrapper.node.access & ACC_INTERFACE) != 0)
+            return;
 
         AtomicBoolean appliedInvoke = new AtomicBoolean(false);
 
@@ -45,7 +55,7 @@ public class ReferenceMutator extends ClassMutator {
         String extraDesc = Strings.repeat("Ljava/lang/Object;", extraParamsCount);
 
         bsmSig = String.format("(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;%s)Ljava/lang/Object;", extraDesc);
-        String targetName = wrapper.getNode().name;
+        String targetName = wrapper.node.name;
 
         bootstrapMethodHandle = new Handle(H_INVOKESTATIC, targetName, bsmName, bsmSig);
 
@@ -53,7 +63,7 @@ public class ReferenceMutator extends ClassMutator {
         if (targetName.contains("$"))
             return;
 
-        wrapper.getMethods().stream()
+        wrapper.methods.stream()
                 .filter(MethodWrapper::hasInstructions)
                 .forEach(method -> {
                     InsnList instructions = method.getInstructions();
@@ -132,15 +142,15 @@ public class ReferenceMutator extends ClassMutator {
         clinit.instructions.insert(insns);
 
         if (extraParamsCount == 0) { // no extra parameters so insert default bootstrap function
-            insertMethod(wrapper.getNode());
+            insertMethod(wrapper.node);
         } else {
-            insertExtraParamMethod(wrapper.getNode());
+            insertExtraParamMethod(wrapper.node);
         }
     }
 
     @Override
     public void handleFinish() {
-        logger.info("hid {} method references", counter);
+        logger.info("Hid {} method references", counter);
     }
 
     /**

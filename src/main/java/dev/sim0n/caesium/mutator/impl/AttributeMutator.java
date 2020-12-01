@@ -2,18 +2,21 @@ package dev.sim0n.caesium.mutator.impl;
 
 import dev.sim0n.caesium.mutator.ClassMutator;
 import dev.sim0n.caesium.util.wrapper.impl.ClassWrapper;
+import org.objectweb.asm.tree.ClassNode;
 
-/**
- * This will turn all classes into directories by append a / to .class
- */
-public class ClassFolderMutator extends ClassMutator {
+public class AttributeMutator extends ClassMutator {
+    public AttributeMutator() {
+        setEnabled(true);
+    }
+
     @Override
     public void handle(ClassWrapper wrapper) {
-        ++counter;
+        ClassNode node = wrapper.node;
+
     }
 
     @Override
     public void handleFinish() {
-        logger.info("Turned {} classes into folders", counter);
+
     }
 }

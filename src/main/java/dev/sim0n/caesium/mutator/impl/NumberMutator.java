@@ -6,18 +6,46 @@ import dev.sim0n.caesium.util.wrapper.impl.ClassWrapper;
 import dev.sim0n.caesium.util.wrapper.impl.MethodWrapper;
 import org.objectweb.asm.tree.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class NumberMutator extends ClassMutator {
     private final InsnList deobfInsns = new InsnList();
 
+    private int numbers;
+
     @Override
     public void handle(ClassWrapper wrapper) {
-        wrapper.getMethods().stream()
+        numbers = 0;
+
+        if ((wrapper.node.access & ACC_INTERFACE) != 0)
+            return;
+
+        List<InsnList> insns = new ArrayList<>();
+
+        wrapper.methods.stream()
                 .filter(MethodWrapper::hasInstructions)
-                // Since we do all calculations in the clinit function for our number mutations we need to check the code size
-                .filter(method -> method.getMaxSize() < 0x4000)
                 .forEach(method -> {
                     InsnList instructions = method.getInstructions();
 
+                    insns.add(instructions);
+
+                    AbstractInsnNode insn = instructions.getFirst();
+
+                    do {
+                        int opcode = insn.getOpcode();
+
+                        if (opcode < ICONST_M1 || opcode > LDC)
+                            continue;
+
+                        ++numbers;
+                    } while ((insn = insn.getNext()) != null);
+                });
+
+        if (numbers > 5000) // this is wayyy too much
+            return;
+
+        insns.forEach(instructions -> {
                     AbstractInsnNode insn = instructions.getFirst();
 
                     do {
@@ -70,7 +98,7 @@ public class NumberMutator extends ClassMutator {
 
     @Override
     public void handleFinish() {
-        logger.info("mutated {} numbers", counter);
+        logger.info("Mutated {} numbers", counter);
     }
 
     /**
@@ -80,7 +108,8 @@ public class NumberMutator extends ClassMutator {
      * @return A push instruction
      */
     private AbstractInsnNode generateInsn(ClassWrapper clazz, Number value) {
-        ClassNode owningClass = clazz.getNode();
+        ClassNode owningClass = clazz.node;
+
         String fieldName = getRandomName();
         String className = value.getClass().getSimpleName();
 

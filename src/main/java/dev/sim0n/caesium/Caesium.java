@@ -4,11 +4,14 @@ import com.google.common.base.Strings;
 import dev.sim0n.caesium.manager.ClassManager;
 import dev.sim0n.caesium.manager.MutatorManager;
 import dev.sim0n.caesium.util.ByteUtil;
+import dev.sim0n.caesium.util.Dictionary;
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.security.SecureRandom;
 import java.util.Optional;
 
@@ -16,7 +19,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 @Getter
 public class Caesium {
-    public static final String VERSION = "1.0.2";
+    public static final String VERSION = "1.0.7";
 
     private static final String SEPARATOR = Strings.repeat("-", 30);
 
@@ -30,6 +33,9 @@ public class Caesium {
     private final MutatorManager mutatorManager;
     private final ClassManager classManager;
 
+    @Setter
+    private Dictionary dictionary = Dictionary.NUMBERS;
+
     public Caesium() {
         instance = Optional.of(this);
 
@@ -38,18 +44,21 @@ public class Caesium {
     }
 
     public int run(File input, File output) throws Exception {
-        checkNotNull(input, "input can't be null");
-        checkNotNull(output, "output can't be null");
+        checkNotNull(input, "Input can't be null");
+        checkNotNull(output, "Output can't be null");
 
         separator();
-        logger.info(String.format("caesium version %s", VERSION));
+        logger.info(String.format("Caesium version %s", VERSION));
         separator();
 
         classManager.parseJar(input);
         classManager.handleMutation();
         classManager.exportJar(output);
 
-        logger.info(String.format("successfully obfuscated target jar. %.3fkb -> %.3fkb", ByteUtil.bytesToKB(input.length()), ByteUtil.bytesToKB(output.length())));
+        double inputKB = ByteUtil.bytesToKB(input.length());
+        double outputKB = ByteUtil.bytesToKB(output.length());
+
+        logger.info(String.format("Successfully obfuscated target jar. %.3fkb -> %.3fkb", inputKB, outputKB));
 
         return 0;
     }

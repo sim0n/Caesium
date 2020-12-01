@@ -4,15 +4,22 @@ import dev.sim0n.caesium.mutator.ClassMutator;
 import dev.sim0n.caesium.util.ASMUtil;
 import dev.sim0n.caesium.util.wrapper.impl.ClassWrapper;
 import dev.sim0n.caesium.util.wrapper.impl.MethodWrapper;
+import lombok.Getter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 
 public class StringMutator extends ClassMutator {
+    @Getter
+    private final Set<String> exclusions = new HashSet<>();
+
     private final List<String> strings = new ArrayList<>();
 
     private String processedStringName;
@@ -27,6 +34,9 @@ public class StringMutator extends ClassMutator {
 
     @Override
     public void handle(ClassWrapper wrapper) {
+        if ((wrapper.node.access & ACC_INTERFACE) != 0)
+            return;
+
         // reset so it doesn't stack up
         strings.clear();
         index = 0;
@@ -42,15 +52,46 @@ public class StringMutator extends ClassMutator {
         initName = getRandomName();
         xorName = getRandomName();
 
-        wrapper.getMethods().stream()
+        wrapper.methods.stream()
                 .filter(MethodWrapper::hasInstructions)
+                .map(m -> m.node)
                 .forEach(method -> {
-                    InsnList instructions = method.getInstructions();
+                    InsnList instructions = method.instructions;
 
-                    Stream.of(method.getInstructions().toArray())
+                    // Since we inject local variables we need to make sure we don't put them inside of a try catch
+                    LabelNode firstLabel = Stream.of(instructions.toArray())
+                            .filter(LabelNode.class::isInstance)
+                            .findFirst()
+                            .map(LabelNode.class::cast)
+                            .orElse(null);
+
+                    boolean tryCatch = method.tryCatchBlocks.stream()
+                            .anyMatch(t -> t.start.getLabel() == firstLabel.getLabel());
+
+                    int randKey = random.nextInt();
+
+                    int var = ++method.maxLocals;
+
+                    int stringCount = getStringCount(instructions);
+
+                    if (stringCount == 0)
+                        return;
+
+                    if (!tryCatch) {
+                        InsnList insns = new InsnList();
+
+                        insns.add(new LdcInsnNode(randomKey ^ randKey));
+                        insns.add(new VarInsnNode(ISTORE, var));
+
+                        instructions.insert(instructions.getFirst(), insns);
+                    }
+
+                    Stream.of(instructions.toArray())
                             .filter(LdcInsnNode.class::isInstance)
                             .map(LdcInsnNode.class::cast)
                             .filter(insn -> insn.cst instanceof String)
+                            .filter(insn -> !exclusions.contains(insn.cst))
+                            .filter(insn -> ((String) insn.cst).length() < 400) // let's not mutate large strings
                             .forEach(insn -> {
                                 String string = (String) insn.cst;
 
@@ -59,13 +100,28 @@ public class StringMutator extends ClassMutator {
                                 InsnList newInstructions = new InsnList();
 
                                 newInstructions.add(optimisedInt);
-                                newInstructions.add(new LdcInsnNode(randomKey));
-                                newInstructions.add(new MethodInsnNode(INVOKESTATIC, wrapper.getNode().name, xorName, "(II)Ljava/lang/String;"));
+
+                                if (!tryCatch && random.nextBoolean()) { // randomise this to make it slightly harder
+                                    newInstructions.add(new VarInsnNode(ILOAD, var));
+
+                                    if (random.nextFloat() > 0.4) {
+                                        newInstructions.add(new IntInsnNode(BIPUSH, ThreadLocalRandom.current().nextInt(-30, 30)));
+                                        newInstructions.add(new InsnNode(POP));
+                                    }
+
+                                    newInstructions.add(new LdcInsnNode(randKey));
+                                    newInstructions.add(new InsnNode(IXOR));
+                                } else {
+                                    newInstructions.add(new LdcInsnNode(randomKey));
+                                }
+
+                                newInstructions.add(new MethodInsnNode(INVOKESTATIC, wrapper.node.name, xorName, "(II)Ljava/lang/String;"));
 
                                 instructions.insert(insn, newInstructions);
                                 instructions.remove(insn);
 
                                 strings.add(string);
+
                                 ++index;
                                 ++counter;
                             });
@@ -78,22 +134,30 @@ public class StringMutator extends ClassMutator {
         wrapper.addField(new FieldNode(ACC_PRIVATE + ACC_STATIC, processedStringName, "[Ljava/lang/String;", null, null));
         wrapper.addField(new FieldNode(ACC_PRIVATE + ACC_STATIC, unprocessedStringName, "[Ljava/lang/String;", null, null));
 
-        insertXorMethod(wrapper.getNode());
-        insertInitMethod(wrapper.getNode());
+        insertXorMethod(wrapper.node);
+        insertInitMethod(wrapper.node);
 
         MethodNode clinit = wrapper.getClinit();
 
         InsnList instructions = new InsnList();
 
         instructions.add(new LabelNode());
-        instructions.add(new MethodInsnNode(INVOKESTATIC, wrapper.getNode().name, initName, "()V", false));
+        instructions.add(new MethodInsnNode(INVOKESTATIC, wrapper.node.name, initName, "()V", false));
 
         clinit.instructions.insert(instructions);
     }
 
+    private int getStringCount(InsnList insns) {
+        return (int) Stream.of(insns.toArray())
+                .filter(LdcInsnNode.class::isInstance)
+                .map(LdcInsnNode.class::cast)
+                .filter(insn -> insn.cst instanceof String)
+                .count();
+    }
+
     @Override
     public void handleFinish() {
-        logger.info("mutated {} string literals", counter);
+        logger.info("Mutated {} string literals", counter);
     }
 
     /**
@@ -527,7 +591,7 @@ public class StringMutator extends ClassMutator {
         mv.visitFrame(F_SAME, 0, null, 0, null);
         mv.visitIntInsn(BIPUSH, randomKeys[b++]);
         // mv.visitIntInsn(BIPUSH, 7);
-//mv.visitInsn(IALOAD);
+        // mv.visitInsn(IALOAD);
         mv.visitVarInsn(ISTORE, 5);
         Label l272 = new Label();
         mv.visitLabel(l272);

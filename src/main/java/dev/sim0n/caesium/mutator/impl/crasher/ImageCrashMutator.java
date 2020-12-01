@@ -1,4 +1,4 @@
-package dev.sim0n.caesium.mutator.impl;
+package dev.sim0n.caesium.mutator.impl.crasher;
 
 import dev.sim0n.caesium.mutator.ClassMutator;
 import dev.sim0n.caesium.util.wrapper.impl.ClassWrapper;
@@ -25,6 +25,6 @@ public class ImageCrashMutator extends ClassMutator {
 
     @Override
     public void handleFinish() {
-        logger.info("inserted crash class");
+        logger.info("Inserted crash class");
     }
 }

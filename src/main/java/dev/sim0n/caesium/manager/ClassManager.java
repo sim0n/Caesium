@@ -4,13 +4,12 @@ import com.google.common.io.ByteStreams;
 import dev.sim0n.caesium.Caesium;
 import dev.sim0n.caesium.exception.CaesiumException;
 import dev.sim0n.caesium.mutator.impl.ClassFolderMutator;
-import dev.sim0n.caesium.mutator.impl.ImageCrashMutator;
+import dev.sim0n.caesium.mutator.impl.crasher.ImageCrashMutator;
 import dev.sim0n.caesium.util.ByteUtil;
 import dev.sim0n.caesium.util.wrapper.impl.ClassWrapper;
 import lombok.Getter;
 import org.apache.logging.log4j.Logger;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.ClassNode;
 
 import java.io.*;
 import java.util.HashMap;
@@ -36,7 +35,7 @@ public class ClassManager {
     private final ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream();
 
     public void parseJar(File input) throws Exception {
-        logger.info("loading classes...");
+        logger.info("Loading classes...");
 
         try (ZipInputStream zis = new ZipInputStream(new FileInputStream(input))) {
             ZipEntry entry;
@@ -51,12 +50,24 @@ public class ClassManager {
 
                     classes.put(new ClassWrapper(classNode), name);
                 } else {
+                    if (name.equals("META-INF/MANIFEST.MF")) {
+                        String manifest = new String(data);
+
+                        // delete this line
+                        manifest = manifest.substring(0, manifest.length() - 2);
+
+                        // watermark the manifest
+                        manifest += String.format("Obfuscated-By: Caesium %s\r\n", Caesium.VERSION);
+
+                        data = manifest.getBytes();
+                    }
+
                     resources.put(name, data);
                 }
             }
         }
 
-        logger.info("loaded {} classes for mutation", classes.size());
+        logger.info("Loaded {} classes for mutation", classes.size());
         caesium.separator();
     }
 
@@ -65,12 +76,15 @@ public class ClassManager {
             Optional<ImageCrashMutator> imageCrashMutator = Optional.ofNullable(mutatorManager.getMutator(ImageCrashMutator.class));
             Optional<ClassFolderMutator> classFolderMutator = Optional.ofNullable(mutatorManager.getMutator(ClassFolderMutator.class));
 
-            AtomicBoolean hideClasses = new AtomicBoolean(classFolderMutator.isPresent());
+            AtomicBoolean hideClasses = new AtomicBoolean(classFolderMutator.isPresent() && classFolderMutator.get().isEnabled());
 
             imageCrashMutator.ifPresent(crasher -> {
+                if (!crasher.isEnabled())
+                    return;
+
                 ClassWrapper wrapper = crasher.getCrashClass();
 
-                classes.put(wrapper, String.format("%s.class", wrapper.getNode().name));
+                classes.put(wrapper, String.format("%s.class", wrapper.node.name));
             });
 
             classes.forEach((node, name) -> {
@@ -81,7 +95,7 @@ public class ClassManager {
                         name += "/";
 
                     out.putNextEntry(new ZipEntry(name));
-                    out.write(ByteUtil.getClassBytes(node.getNode()));
+                    out.write(ByteUtil.getClassBytes(node.node));
 
                     if (hideClasses.get()) { // generate a bunch of fake classes
                         String finalName = name;

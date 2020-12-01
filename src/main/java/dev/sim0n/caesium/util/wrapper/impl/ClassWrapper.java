@@ -10,12 +10,11 @@ import org.objectweb.asm.tree.MethodNode;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Getter
 public class ClassWrapper implements Wrapper {
-    private final ClassNode node;
+    public final ClassNode node;
 
-    private final List<MethodWrapper> methods;
-    private final List<FieldWrapper> fields;
+    public final List<MethodWrapper> methods;
+    public final List<FieldWrapper> fields;
 
     public ClassWrapper(ClassNode node) {
         this.node = node;
