@@ -361,7 +361,7 @@ public class CGui extends JFrame {
                     stringMutator.getExclusions().add(elements.nextElement());
                 }
 
-                mutatorManager.getMutator(BadAnnotationMutator.class).setEnabled(checkBox4.isEnabled());
+                mutatorManager.getMutator(BadAnnotationMutator.class).setEnabled(checkBox4.isSelected());
 
                 mutatorManager.getMutator(ControlFlowMutator.class).setEnabled(checkBox2.isSelected());
                 mutatorManager.getMutator(NumberMutator.class).setEnabled(checkBox3.isSelected());
