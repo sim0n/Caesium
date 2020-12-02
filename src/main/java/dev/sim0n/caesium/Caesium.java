@@ -5,13 +5,13 @@ import dev.sim0n.caesium.manager.ClassManager;
 import dev.sim0n.caesium.manager.MutatorManager;
 import dev.sim0n.caesium.util.ByteUtil;
 import dev.sim0n.caesium.util.Dictionary;
+import dev.sim0n.caesium.util.VersionUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
-import java.io.PrintStream;
 import java.security.SecureRandom;
 import java.util.Optional;
 
@@ -19,7 +19,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 @Getter
 public class Caesium {
-    public static final String VERSION = "1.0.7";
+    public static final String VERSION = VersionUtil.getVersion();
 
     private static final String SEPARATOR = Strings.repeat("-", 30);
 
