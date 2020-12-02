@@ -42,8 +42,6 @@ public class Caesium {
 
         mutatorManager = new MutatorManager();
         classManager = new ClassManager();
-
-        System.out.println(VERSION);
     }
 
     public int run(File input, File output) throws Exception {
