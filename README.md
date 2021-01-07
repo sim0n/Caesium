@@ -1,7 +1,9 @@
 # Caesium
-Caesium is a Java bytecode obfuscator that I wrote for fun and figured I'd make public
+Caesium is a powerful Java bytecode obfuscator written by [sim0n](https://github.com/sim0n) for fun, and released for the public.
 
-Currently available mutators
+![Image of Caesium UI](https://i.imgur.com/drrn9ib.png)
+
+### Currently available mutators
 * Class Folder (Turns classes into folders)
 * Control Flow
 * Crasher (Will crash almost every GUI based RE tool)
@@ -13,4 +15,6 @@ Currently available mutators
 * String
 
 ## Usage
-Run the jar and select your mutators in the mutators tab and hit mutate. Done!
+- Run the jar.
+- Select mutators in the mutators tab.
+- Hit mutate. Done!
