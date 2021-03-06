@@ -11,7 +11,6 @@ import dev.sim0n.caesium.mutator.impl.*;
 import dev.sim0n.caesium.mutator.impl.crasher.BadAnnotationMutator;
 import dev.sim0n.caesium.mutator.impl.crasher.ImageCrashMutator;
 import dev.sim0n.caesium.util.Dictionary;
-import net.qtechnologies.qprotect.gui.LibraryTab;
 
 import java.awt.*;
 import java.io.File;
