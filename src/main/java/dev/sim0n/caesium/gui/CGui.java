@@ -11,6 +11,7 @@ import dev.sim0n.caesium.mutator.impl.*;
 import dev.sim0n.caesium.mutator.impl.crasher.BadAnnotationMutator;
 import dev.sim0n.caesium.mutator.impl.crasher.ImageCrashMutator;
 import dev.sim0n.caesium.util.Dictionary;
+import net.qtechnologies.qprotect.gui.LibraryTab;
 
 import java.awt.*;
 import java.io.File;
@@ -72,6 +73,7 @@ public class CGui extends JFrame {
         button5 = new JButton();
         panel6 = new JPanel();
         panel4 = new JPanel();
+        panel7 = new JPanel();
         label7 = new JLabel();
         comboBox5 = new JComboBox();
         button3 = new JButton();
@@ -307,10 +309,17 @@ public class CGui extends JFrame {
                 comboBox5.setSelectedIndex(3);
                 comboBox5.setFocusable(false);
 
+                
                 panel4.add(comboBox5);
                 comboBox5.setBounds(75, 15, 150, comboBox5.getPreferredSize().height);
             }
             tabbedPane1.addTab("Settings", panel4);
+            //======== panel5 ========
+            {
+                LibraryTab libraryTab = new LibraryTab();
+                tabbedPane1.addTab("Dependencies", null, libraryTab, null);
+                comboBox5.setBounds(75, 15, 150, comboBox5.getPreferredSize().height);
+            }
         }
         contentPane.add(tabbedPane1);
         tabbedPane1.setBounds(5, 5, 345, 390);
@@ -449,6 +458,7 @@ public class CGui extends JFrame {
     private JPanel panel3;
     private JTabbedPane tabbedPane2;
     private JPanel panel5;
+    private JPanel panel7;
     private JScrollPane scrollPane1;
     private JList list1;
     private JButton button4;
