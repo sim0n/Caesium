@@ -11,16 +11,19 @@ import dev.sim0n.caesium.mutator.impl.*;
 import dev.sim0n.caesium.mutator.impl.crasher.BadAnnotationMutator;
 import dev.sim0n.caesium.mutator.impl.crasher.ImageCrashMutator;
 import dev.sim0n.caesium.util.Dictionary;
+import dev.sim0n.caesium.util.OSUtil;
 
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.Enumeration;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
- * This entire thing is a mess because it was automatically generated with JFormDesigner
+ * This entire thing is a mess because it was automatically generated with
+ * JFormDesigner
  */
 public class CGui extends JFrame {
     public CGui() {
@@ -31,13 +34,54 @@ public class CGui extends JFrame {
         initComponents();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws HeadlessException, IOException {
+        loadJavaRuntime();
         new CGui().setVisible(true);
     }
 
+    private static void loadJavaRuntime() throws HeadlessException, IOException {
+        String path;
+        switch (OSUtil.getCurrentOS()) {
+        case WINDOWS:
+            path = System.getProperty("sun.boot.class.path");
+            if (path != null) {
+                String[] pathFiles = path.split(";");
+                for (String lib : pathFiles) {
+                    if (lib.endsWith(".jar")) {
+                        LibraryTab.libraries.addElement(lib);
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "rt.jar was not found, you need to add it manually.",
+                        "Runtime Error", JOptionPane.ERROR_MESSAGE);
+            }
+            break;
+
+        case UNIX:
+        case MAC:
+            path = System.getProperty("sun.boot.class.path");
+            if (path != null) {
+                String[] pathFiles = path.split(":");
+                for (String lib : pathFiles) {
+                    if (lib.endsWith(".jar")) {
+                        LibraryTab.libraries.addElement(lib);
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "rt.jar was not found, you need to add it manually.",
+                        "Runtime Error", JOptionPane.ERROR_MESSAGE);
+            }
+            break;
+        default:
+            break;
+        }
+    }
+
     private DefaultListModel<String> listModel = new DefaultListModel<>();
+
     private void initComponents() {
-        // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
+        // JFormDesigner - Component initialization - DO NOT MODIFY
+        // //GEN-BEGIN:initComponents
         // Generated using JFormDesigner Evaluation license - unknown
         tabbedPane1 = new JTabbedPane();
         panel1 = new JPanel();
@@ -79,25 +123,25 @@ public class CGui extends JFrame {
 
         list1.setModel(listModel);
 
-        //======== this ========
+        // ======== this ========
         setTitle("Caesium Obfuscator");
         Container contentPane = getContentPane();
         contentPane.setLayout(null);
 
-        //======== tabbedPane1 ========
+        // ======== tabbedPane1 ========
         {
             tabbedPane1.setFocusable(false);
 
-            //======== panel1 ========
+            // ======== panel1 ========
             {
                 panel1.setLayout(null);
 
-                //---- label1 ----
+                // ---- label1 ----
                 label1.setText("Output");
                 panel1.add(label1);
                 label1.setBounds(new Rectangle(new Point(5, 45), label1.getPreferredSize()));
 
-                //---- label2 ----
+                // ---- label2 ----
                 label2.setText("Input");
                 panel1.add(label2);
                 label2.setBounds(new Rectangle(new Point(5, 15), label2.getPreferredSize()));
@@ -106,7 +150,7 @@ public class CGui extends JFrame {
                 panel1.add(textField2);
                 textField2.setBounds(55, 45, 220, textField2.getPreferredSize().height);
 
-                //---- button1 ----
+                // ---- button1 ----
                 button1.setText("...");
                 button1.setFocusable(false);
                 panel1.add(button1);
@@ -127,7 +171,7 @@ public class CGui extends JFrame {
                 });
                 button1.setBounds(285, 15, 50, 22);
 
-                //---- button2 ----
+                // ---- button2 ----
                 button2.setText("...");
                 button2.setFocusable(false);
                 button2.addActionListener(l -> {
@@ -144,7 +188,7 @@ public class CGui extends JFrame {
                 panel1.add(button2);
                 button2.setBounds(285, 45, 50, 22);
 
-                //---- label3 ----
+                // ---- label3 ----
                 label3.setText("Application type");
                 panel1.add(label3);
                 label3.setBounds(new Rectangle(new Point(10, 88), label3.getPreferredSize()));
@@ -157,23 +201,23 @@ public class CGui extends JFrame {
             }
             tabbedPane1.addTab("Main", panel1);
 
-            //======== panel2 ========
+            // ======== panel2 ========
             {
                 panel2.setLayout(null);
 
-                //---- checkBox1 ----
+                // ---- checkBox1 ----
                 checkBox1.setText("String literal mutation");
                 checkBox1.setFocusable(false);
                 panel2.add(checkBox1);
                 checkBox1.setBounds(new Rectangle(new Point(10, 10), checkBox1.getPreferredSize()));
 
-                //---- checkBox2 ----
+                // ---- checkBox2 ----
                 checkBox2.setText("Control flow mutation");
                 checkBox2.setFocusable(false);
                 panel2.add(checkBox2);
                 checkBox2.setBounds(new Rectangle(new Point(10, 40), checkBox2.getPreferredSize()));
 
-                //---- label4 ----
+                // ---- label4 ----
                 label4.setText("Reference Mutation");
                 panel2.add(label4);
                 label4.setBounds(new Rectangle(new Point(15, 113), label4.getPreferredSize()));
@@ -184,13 +228,13 @@ public class CGui extends JFrame {
                 panel2.add(comboBox2);
                 comboBox2.setBounds(150, 110, 170, comboBox2.getPreferredSize().height);
 
-                //---- checkBox3 ----
+                // ---- checkBox3 ----
                 checkBox3.setText("Number mutation");
                 checkBox3.setFocusable(false);
                 panel2.add(checkBox3);
                 checkBox3.setBounds(new Rectangle(new Point(10, 70), checkBox3.getPreferredSize()));
 
-                //---- label5 ----
+                // ---- label5 ----
                 label5.setText("Local Variable tables");
                 panel2.add(label5);
                 label5.setBounds(new Rectangle(new Point(15, 158), label5.getPreferredSize()));
@@ -205,19 +249,19 @@ public class CGui extends JFrame {
                 checkBox6.setFocusable(false);
                 panel2.add(checkBox6);
                 checkBox6.setBounds(new Rectangle(new Point(10, 240), checkBox6.getPreferredSize()));
-                //---- checkBox4 ----
+                // ---- checkBox4 ----
                 checkBox4.setText("Crasher");
                 checkBox4.setFocusable(false);
                 panel2.add(checkBox4);
                 checkBox4.setBounds(new Rectangle(new Point(10, 270), checkBox4.getPreferredSize()));
 
-                //---- checkBox5 ----
+                // ---- checkBox5 ----
                 checkBox5.setText("Class Folder");
                 checkBox5.setFocusable(false);
                 panel2.add(checkBox5);
                 checkBox5.setBounds(new Rectangle(new Point(90, 270), checkBox5.getPreferredSize()));
 
-                //---- label6 ----
+                // ---- label6 ----
                 label6.setText("Line Number tables");
                 panel2.add(label6);
                 label6.setBounds(new Rectangle(new Point(15, 203), label6.getPreferredSize()));
@@ -230,32 +274,32 @@ public class CGui extends JFrame {
             }
             tabbedPane1.addTab("Mutators", panel2);
 
-            //======== panel3 ========
+            // ======== panel3 ========
             {
                 panel3.setLayout(null);
 
-                //======== tabbedPane2 ========
+                // ======== tabbedPane2 ========
                 {
                     tabbedPane2.setFocusable(false);
 
-                    //======== panel5 ========
+                    // ======== panel5 ========
                     {
                         panel5.setLayout(null);
 
-                        //======== scrollPane1 ========
+                        // ======== scrollPane1 ========
                         {
                             scrollPane1.setViewportView(list1);
                         }
                         panel5.add(scrollPane1);
                         scrollPane1.setBounds(1, 5, 324, 275);
 
-                        //---- button4 ----
+                        // ---- button4 ----
                         button4.setText("Add");
                         button4.setFocusable(false);
                         panel5.add(button4);
                         button4.setBounds(178, 285, 58, button4.getPreferredSize().height);
 
-                        //---- textField3 ----
+                        // ---- textField3 ----
                         textField3.setText("");
                         panel5.add(textField3);
                         textField3.setBounds(2, 285, 173, 22);
@@ -267,7 +311,7 @@ public class CGui extends JFrame {
                             }
                         });
 
-                        //---- button5 ----
+                        // ---- button5 ----
                         button5.setText("Remove");
                         button5.setFocusable(false);
                         panel5.add(button5);
@@ -281,7 +325,7 @@ public class CGui extends JFrame {
                     }
                     tabbedPane2.addTab("Strings", panel5);
 
-                    //======== panel6 ========
+                    // ======== panel6 ========
                     {
                         panel6.setLayout(null);
                     }
@@ -292,11 +336,11 @@ public class CGui extends JFrame {
             }
             tabbedPane1.addTab("Exclusions", panel3);
 
-            //======== panel4 ========
+            // ======== panel4 ========
             {
                 panel4.setLayout(null);
 
-                //---- label7 ----
+                // ---- label7 ----
                 label7.setText("Dictionary");
                 panel4.add(label7);
                 label7.setBounds(new Rectangle(new Point(10, 18), label7.getPreferredSize()));
@@ -308,12 +352,11 @@ public class CGui extends JFrame {
                 comboBox5.setSelectedIndex(3);
                 comboBox5.setFocusable(false);
 
-                
                 panel4.add(comboBox5);
                 comboBox5.setBounds(75, 15, 150, comboBox5.getPreferredSize().height);
             }
             tabbedPane1.addTab("Settings", panel4);
-            //======== panel5 ========
+            // ======== panel5 ========
             {
                 LibraryTab libraryTab = new LibraryTab();
                 tabbedPane1.addTab("Dependencies", null, libraryTab, null);
@@ -323,11 +366,10 @@ public class CGui extends JFrame {
         contentPane.add(tabbedPane1);
         tabbedPane1.setBounds(5, 5, 345, 390);
 
-        //---- button3 ----
+        // ---- button3 ----
         button3.setText("Mutate");
         button3.addActionListener(l -> {
             Caesium caesium = new Caesium();
-
 
             File input = new File(textField1.getText());
 
@@ -341,7 +383,8 @@ public class CGui extends JFrame {
             File output = new File(textField2.getText());
 
             if (output.exists()) {
-                // we do it this way so we don't have to loop through a specified x amount of times
+                // we do it this way so we don't have to loop through a specified x amount of
+                // times
                 for (int i = 0; i < parent.listFiles().length; i++) {
                     String filePath = String.format("%s.BACKUP-%d", output.getAbsoluteFile(), i);
                     File file = new File(filePath);
@@ -426,10 +469,10 @@ public class CGui extends JFrame {
         contentPane.setPreferredSize(new Dimension(355, 430));
         pack();
         setLocationRelativeTo(getOwner());
-        // JFormDesigner - End of component initialization  //GEN-END:initComponents
+        // JFormDesigner - End of component initialization //GEN-END:initComponents
     }
 
-    // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
+    // JFormDesigner - Variables declaration - DO NOT MODIFY //GEN-BEGIN:variables
     // Generated using JFormDesigner Evaluation license - unknown
     private JTabbedPane tabbedPane1;
     private JPanel panel1;
@@ -468,5 +511,5 @@ public class CGui extends JFrame {
     private JLabel label7;
     private JComboBox comboBox5;
     private JButton button3;
-    // JFormDesigner - End of variables declaration  //GEN-END:variables
+    // JFormDesigner - End of variables declaration //GEN-END:variables
 }
