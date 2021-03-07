@@ -28,7 +28,7 @@ public class ByteUtil {
      * @return A byte array from {@param classNode}
      */
     public byte[] getClassBytes(ClassNode classNode) {
-        CaesiumClassWriter classWriter = new CaesiumClassWriter();
+        CaesiumClassWriter classWriter = new CaesiumClassWriter(CaesiumClassWriter.COMPUTE_FRAMES);
 
         classWriter.newUTF8("caesium");
         classNode.accept(classWriter);

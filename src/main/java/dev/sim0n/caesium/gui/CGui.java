@@ -6,17 +6,23 @@ package dev.sim0n.caesium.gui;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import dev.sim0n.caesium.Caesium;
+import dev.sim0n.caesium.PreRuntime;
+import dev.sim0n.caesium.exception.CaesiumException;
 import dev.sim0n.caesium.manager.MutatorManager;
 import dev.sim0n.caesium.mutator.impl.*;
 import dev.sim0n.caesium.mutator.impl.crasher.BadAnnotationMutator;
 import dev.sim0n.caesium.mutator.impl.crasher.ImageCrashMutator;
 import dev.sim0n.caesium.util.Dictionary;
 import dev.sim0n.caesium.util.OSUtil;
+import dev.sim0n.caesium.util.wrapper.impl.ClassWrapper;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -25,7 +31,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * This entire thing is a mess because it was automatically generated with
  * JFormDesigner
  */
+
 public class CGui extends JFrame {
+
     public CGui() {
         FlatLightLaf.install();
 
@@ -35,46 +43,10 @@ public class CGui extends JFrame {
     }
 
     public static void main(String[] args) throws HeadlessException, IOException {
-        loadJavaRuntime();
+
+        PreRuntime.loadJavaRuntime();
+
         new CGui().setVisible(true);
-    }
-
-    private static void loadJavaRuntime() throws HeadlessException, IOException {
-        String path;
-        switch (OSUtil.getCurrentOS()) {
-        case WINDOWS:
-            path = System.getProperty("sun.boot.class.path");
-            if (path != null) {
-                String[] pathFiles = path.split(";");
-                for (String lib : pathFiles) {
-                    if (lib.endsWith(".jar")) {
-                        LibraryTab.libraries.addElement(lib);
-                    }
-                }
-            } else {
-                JOptionPane.showMessageDialog(null, "rt.jar was not found, you need to add it manually.",
-                        "Runtime Error", JOptionPane.ERROR_MESSAGE);
-            }
-            break;
-
-        case UNIX:
-        case MAC:
-            path = System.getProperty("sun.boot.class.path");
-            if (path != null) {
-                String[] pathFiles = path.split(":");
-                for (String lib : pathFiles) {
-                    if (lib.endsWith(".jar")) {
-                        LibraryTab.libraries.addElement(lib);
-                    }
-                }
-            } else {
-                JOptionPane.showMessageDialog(null, "rt.jar was not found, you need to add it manually.",
-                        "Runtime Error", JOptionPane.ERROR_MESSAGE);
-            }
-            break;
-        default:
-            break;
-        }
     }
 
     private DefaultListModel<String> listModel = new DefaultListModel<>();
@@ -373,6 +345,14 @@ public class CGui extends JFrame {
 
             File input = new File(textField1.getText());
 
+            try {
+                PreRuntime.loadInput(textField1.getText());
+            } catch (CaesiumException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+            PreRuntime.loadClassPath();
+            PreRuntime.buildInheritance();
             if (!input.exists()) {
                 JOptionPane.showMessageDialog(null, "Unable to find input file", "", JOptionPane.WARNING_MESSAGE);
                 return;

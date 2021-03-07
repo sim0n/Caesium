@@ -20,7 +20,7 @@ public class ImageCrashMutator extends ClassMutator {
         classNode.access = ACC_PUBLIC;
         classNode.version = V1_5;
 
-        return new ClassWrapper(classNode);
+        return new ClassWrapper(classNode, false);
     }
 
     @Override

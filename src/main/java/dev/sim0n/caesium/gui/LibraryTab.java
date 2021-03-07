@@ -2,6 +2,9 @@ package dev.sim0n.caesium.gui;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import dev.sim0n.caesium.PreRuntime;
+
 import java.awt.*;
 import java.io.File;
 import java.util.List;
@@ -11,15 +14,13 @@ public class LibraryTab extends JPanel {
      * 
      */
     private static final long serialVersionUID = 4696970146752109196L;
-    public static DefaultListModel<String> libraries = new DefaultListModel<>();
-
 
     public LibraryTab() {
         GridBagLayout gbl_this = new GridBagLayout();
-        gbl_this.columnWidths = new int[]{0, 0, 0, 0, 0};
-        gbl_this.rowHeights = new int[]{0, 0, 0};
-        gbl_this.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
-        gbl_this.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+        gbl_this.columnWidths = new int[] { 0, 0, 0, 0, 0 };
+        gbl_this.rowHeights = new int[] { 0, 0, 0 };
+        gbl_this.columnWeights = new double[] { 0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE };
+        gbl_this.rowWeights = new double[] { 1.0, 0.0, Double.MIN_VALUE };
         this.setLayout(gbl_this);
 
         JScrollPane ScrollPane = new JScrollPane();
@@ -31,9 +32,8 @@ public class LibraryTab extends JPanel {
         gbc_ScrollPane.gridy = 0;
         this.add(ScrollPane, gbc_ScrollPane);
 
-
-        JList<String> exclusionList = new JList<>(libraries);
-        ScrollPane.setViewportView(exclusionList);
+        JList<String> libList = new JList<>(PreRuntime.libraries);
+        ScrollPane.setViewportView(libList);
 
         JTextField librariesField = new JTextField();
         GridBagConstraints gbc_librariesField = new GridBagConstraints();
@@ -56,10 +56,11 @@ public class LibraryTab extends JPanel {
                 File file = new File(path);
 
                 if (file.exists()) {
-                    libraries.addElement(path);
+                    PreRuntime.libraries.addElement(path);
                     librariesField.setText(null);
                 } else {
-                    JOptionPane.showMessageDialog(null, "Could not locate dependency.", "Caesium Dependency", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Could not locate dependency.", "Caesium Dependency",
+                            JOptionPane.ERROR_MESSAGE);
                 }
             } else {
                 final JFileChooser chooser = new JFileChooser();
@@ -73,7 +74,7 @@ public class LibraryTab extends JPanel {
                 if (result == 0) {
                     File[] libs = chooser.getSelectedFiles();
                     for (File lib : libs) {
-                        libraries.addElement(lib.toString());
+                        PreRuntime.libraries.addElement(lib.toString());
                     }
                 }
             }
@@ -87,12 +88,12 @@ public class LibraryTab extends JPanel {
         gbc_removeButton.gridx = 3;
         gbc_removeButton.gridy = 1;
         removeButton.addActionListener((e) -> {
-            List<String> removeList = exclusionList.getSelectedValuesList();
+            List<String> removeList = libList.getSelectedValuesList();
             if (removeList.isEmpty())
                 return;
 
             for (String s : removeList) {
-                libraries.removeElement(s);
+                PreRuntime.libraries.removeElement(s);
             }
         });
         this.add(removeButton, gbc_removeButton);
