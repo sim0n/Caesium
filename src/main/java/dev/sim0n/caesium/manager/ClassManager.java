@@ -48,7 +48,7 @@ public class ClassManager {
                 if (name.endsWith(".class")) {
                     ClassNode classNode = ByteUtil.parseClassBytes(data);
 
-                    classes.put(new ClassWrapper(classNode), name);
+                    classes.put(new ClassWrapper(classNode, false), name);
                 } else {
                     if (name.equals("META-INF/MANIFEST.MF")) {
                         String manifest = new String(data);

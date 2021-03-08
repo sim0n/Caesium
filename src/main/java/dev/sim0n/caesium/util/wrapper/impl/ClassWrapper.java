@@ -15,6 +15,10 @@ public class ClassWrapper implements Wrapper {
 
     public final List<MethodWrapper> methods;
     public final List<FieldWrapper> fields;
+    
+    public final String originalName;
+    
+    public final boolean libraryNode;
 
     public ClassWrapper(ClassNode node) {
         this.node = node;
@@ -26,8 +30,23 @@ public class ClassWrapper implements Wrapper {
         fields = node.fields.stream()
                 .map(FieldWrapper::new)
                 .collect(Collectors.toList());
+        this.originalName = node.name;
+        this.libraryNode = false;
     }
+    
+    public ClassWrapper(ClassNode classNode, boolean libraryNode) {
+        this.node = classNode;
+        this.originalName = classNode.name;
+        this.libraryNode = libraryNode;
+        
+        methods = node.methods.stream()
+                .map(MethodWrapper::new)
+                .collect(Collectors.toList());
 
+        fields = node.fields.stream()
+                .map(FieldWrapper::new)
+                .collect(Collectors.toList());    
+    }
     /**
      * Gets the clinit method or creates one if it isn't present
      * @return The clinit method
