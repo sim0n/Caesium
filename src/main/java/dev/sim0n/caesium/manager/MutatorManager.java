@@ -22,6 +22,9 @@ public class MutatorManager {
 
         mutators.add(new ImageCrashMutator());
 
+        mutators.add(new ShuffleMutator());
+        mutators.add(new TrimMutator());
+
         mutators.add(new LineNumberMutator());
         mutators.add(new LocalVariableMutator());
         mutators.add(new StringMutator());
@@ -29,6 +32,7 @@ public class MutatorManager {
         mutators.add(new NumberMutator());
         mutators.add(new PolymorphMutator());
         mutators.add(new ReferenceMutator());
+
        // mutators.add(new AttributeMutator());
         mutators.add(new BadAnnotationMutator());
     }

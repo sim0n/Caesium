@@ -114,7 +114,7 @@ public class PreRuntime {
         for (String s : libs) {
             File file = new File(s);
             if (file.exists()) {
-                System.out.println(String.format("Loading library \"%s\".", file.getAbsolutePath()));
+                System.out.printf("Loading library \"%s\".%n", file.getAbsolutePath());
                 try {
                     ZipFile zipFile = new ZipFile(file);
                     Enumeration<? extends ZipEntry> entries = zipFile.entries();

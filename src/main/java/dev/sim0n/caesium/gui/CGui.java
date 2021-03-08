@@ -13,15 +13,11 @@ import dev.sim0n.caesium.mutator.impl.*;
 import dev.sim0n.caesium.mutator.impl.crasher.BadAnnotationMutator;
 import dev.sim0n.caesium.mutator.impl.crasher.ImageCrashMutator;
 import dev.sim0n.caesium.util.Dictionary;
-import dev.sim0n.caesium.util.OSUtil;
-import dev.sim0n.caesium.util.wrapper.impl.ClassWrapper;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -76,6 +72,8 @@ public class CGui extends JFrame {
         checkBox4 = new JCheckBox();
         checkBox5 = new JCheckBox();
         checkBox6 = new JCheckBox();
+        checkBox7 = new JCheckBox();
+        checkBox8 = new JCheckBox();
         label6 = new JLabel();
         comboBox4 = new JComboBox();
         panel3 = new JPanel();
@@ -233,6 +231,18 @@ public class CGui extends JFrame {
                 panel2.add(checkBox5);
                 checkBox5.setBounds(new Rectangle(new Point(90, 270), checkBox5.getPreferredSize()));
 
+                // ---- checkBox7 ----
+                checkBox7.setText("Trimmer");
+                checkBox7.setFocusable(false);
+                panel2.add(checkBox7);
+                checkBox7.setBounds(new Rectangle(new Point(10, 300), checkBox7.getPreferredSize()));
+
+                // ---- checkBox8 ----
+                checkBox8.setText("Shuffle Members");
+                checkBox8.setFocusable(false);
+                panel2.add(checkBox8);
+                checkBox8.setBounds(new Rectangle(new Point(10, 330), checkBox8.getPreferredSize()));
+
                 // ---- label6 ----
                 label6.setText("Line Number tables");
                 panel2.add(label6);
@@ -310,12 +320,12 @@ public class CGui extends JFrame {
 
             // ======== panel4 ========
             {
-                panel4.setLayout(null);
+               // panel4.setLayout(null);
 
                 // ---- label7 ----
                 label7.setText("Dictionary");
-                panel4.add(label7);
-                label7.setBounds(new Rectangle(new Point(10, 18), label7.getPreferredSize()));
+                panel1.add(label7);
+                label7.setBounds(new Rectangle(new Point(10, 125), label7.getPreferredSize()));
                 comboBox5.addItem("abc");
                 comboBox5.addItem("ABC");
                 comboBox5.addItem("III");
@@ -324,19 +334,19 @@ public class CGui extends JFrame {
                 comboBox5.setSelectedIndex(3);
                 comboBox5.setFocusable(false);
 
-                panel4.add(comboBox5);
-                comboBox5.setBounds(75, 15, 150, comboBox5.getPreferredSize().height);
+                panel1.add(comboBox5);
+                comboBox5.setBounds(140, 125, 150, comboBox5.getPreferredSize().height);
             }
-            tabbedPane1.addTab("Settings", panel4);
+           // tabbedPane1.addTab("Settings", panel4);
             // ======== panel5 ========
             {
                 LibraryTab libraryTab = new LibraryTab();
-                tabbedPane1.addTab("Dependencies", null, libraryTab, null);
-                comboBox5.setBounds(75, 15, 150, comboBox5.getPreferredSize().height);
+                tabbedPane1.addTab("Dependencies", libraryTab);
+                //comboBox5.setBounds(75, 15, 150, comboBox5.getPreferredSize().height);
             }
         }
         contentPane.add(tabbedPane1);
-        tabbedPane1.setBounds(5, 5, 345, 390);
+        tabbedPane1.setBounds(5, 5, 425, 390);
 
         // ---- button3 ----
         button3.setText("Mutate");
@@ -401,6 +411,9 @@ public class CGui extends JFrame {
 
                 mutatorManager.getMutator(ImageCrashMutator.class).setEnabled(checkBox4.isSelected());
                 mutatorManager.getMutator(ClassFolderMutator.class).setEnabled(checkBox5.isSelected());
+
+                mutatorManager.getMutator(TrimMutator.class).setEnabled(checkBox7.isSelected());
+                mutatorManager.getMutator(ShuffleMutator.class).setEnabled(checkBox8.isSelected());
 
                 {
                     int value = comboBox2.getSelectedIndex();
@@ -475,6 +488,8 @@ public class CGui extends JFrame {
     private JCheckBox checkBox4;
     private JCheckBox checkBox5;
     private JCheckBox checkBox6;
+    private JCheckBox checkBox7;
+    private JCheckBox checkBox8;
     private JLabel label6;
     private JComboBox comboBox4;
     private JPanel panel3;
