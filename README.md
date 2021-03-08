@@ -14,6 +14,9 @@ Caesium is a powerful Java bytecode obfuscator written by [sim0n](https://github
 * Reference (invokedynamics)
 * String
 
+## Notes
+You have to add every dependency your jar relies on.
+
 ## Usage
 - Run the jar.
 - Select mutators in the mutators tab.
