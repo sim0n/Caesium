@@ -21,6 +21,8 @@
 *.tar.gz
 *.rar
 
+*.txt
+
 # IntelliJ
 *.iml
 .idea

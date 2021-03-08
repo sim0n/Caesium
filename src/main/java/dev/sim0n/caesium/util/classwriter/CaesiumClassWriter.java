@@ -13,8 +13,6 @@ import dev.sim0n.caesium.PreRuntime;
 import dev.sim0n.caesium.exception.CaesiumException;
 import dev.sim0n.caesium.util.wrapper.impl.ClassWrapper;
 
-
-// wacky hack so we can compute frames without loading libraries (be careful with this, it doesn't always work)
 public class CaesiumClassWriter extends ClassWriter {
     public CaesiumClassWriter(int flags) {
         super(flags);
