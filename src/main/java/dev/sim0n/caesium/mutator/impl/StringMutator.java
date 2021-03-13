@@ -1,5 +1,6 @@
 package dev.sim0n.caesium.mutator.impl;
 
+import com.google.common.base.Charsets;
 import dev.sim0n.caesium.mutator.ClassMutator;
 import dev.sim0n.caesium.util.ASMUtil;
 import dev.sim0n.caesium.util.StringUtil;
@@ -12,6 +13,7 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 import javax.crypto.spec.IvParameterSpec;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -195,7 +197,7 @@ public class StringMutator extends ClassMutator {
 
             instance.init(Cipher.ENCRYPT_MODE, keyFactory.generateSecret(new DESKeySpec(keys)), new IvParameterSpec(new byte[8]));
 
-            return new String(Base64.getEncoder().encode(instance.doFinal((s.getBytes()))));
+            return new String(Base64.getEncoder().encode(instance.doFinal(s.getBytes(Charsets.ISO_8859_1))));
         } catch (Exception e) {
             e.printStackTrace();
         }
