@@ -26,3 +26,8 @@ Caesium is very optimised and the performance loss shouldn't be more than 5-10% 
 
 ## Community 
 If you want to join the discord for Caesium to talk, ask questions or anything then feel free to join [the discord](https://discord.gg/kxC2FYMfNZ)
+
+## Special thanks to
+![yourkit logo](https://www.yourkit.com/images/yklogo.png)
+
+[YourKit](https://www.yourkit.com/) is the creator of <a href="https://www.yourkit.com/java/profiler/">YourKit Java Profiler</a>, <a href="https://www.yourkit.com/.net/profiler/">YourKit .NET Profiler</a>, and <a href="https://www.yourkit.com/youmonitor/">YourKit YouMonitor</a>. They support open source projects with their fully featured application profilers.
