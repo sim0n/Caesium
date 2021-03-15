@@ -42,7 +42,7 @@ public class NumberMutator extends ClassMutator {
                     } while ((insn = insn.getNext()) != null);
                 });
 
-        if (numbers > 5000) // this is wayyy too much
+        if (numbers > 1000) // this is wayyy too much
             return;
 
         insns.forEach(instructions -> {

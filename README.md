@@ -13,9 +13,11 @@ Caesium is a powerful Java bytecode obfuscator written by [sim0n](https://github
 * Polymorph
 * Reference (invokedynamics)
 * String
+* Trim (Currently only trims math functions)
 
 ## Notes
 You have to add every dependency your jar relies on.
+Caesium is very optimised and the performance loss shouldn't be more than 5-10% (unless you're using reference mutation)
 
 ## Usage
 - Run the jar.

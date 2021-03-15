@@ -13,6 +13,8 @@ import dev.sim0n.caesium.PreRuntime;
 import dev.sim0n.caesium.exception.CaesiumException;
 import dev.sim0n.caesium.util.wrapper.impl.ClassWrapper;
 
+import javax.swing.*;
+
 public class CaesiumClassWriter extends ClassWriter {
     public CaesiumClassWriter(int flags) {
         super(flags);
@@ -30,6 +32,7 @@ public class CaesiumClassWriter extends ClassWriter {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
         String second = null;
         try {
             second = deriveCommonSuperName(type2, type1);
@@ -37,6 +40,7 @@ public class CaesiumClassWriter extends ClassWriter {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
         if (!"java/lang/Object".equals(first))
             return first;
 
@@ -49,9 +53,8 @@ public class CaesiumClassWriter extends ClassWriter {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
         return "java/lang/Object";
-
-
     }
 
     private String deriveCommonSuperName(String type1, String type2) throws CaesiumException {
@@ -74,8 +77,10 @@ public class CaesiumClassWriter extends ClassWriter {
 
     private ClassNode returnClazz(String ref) throws CaesiumException {
         ClassWrapper clazz = PreRuntime.getClassPath().get(ref);
-        if (clazz == null)
+        if (clazz == null) {
+            JOptionPane.showMessageDialog(null, "Couldn't find " + ref + " in classpath.", "Error", JOptionPane.ERROR_MESSAGE);
             throw new CaesiumException(ref + " does not exist in classpath!", null);
+        }
 
         return clazz.node;
     }
@@ -83,15 +88,17 @@ public class CaesiumClassWriter extends ClassWriter {
     private boolean isAssignableFrom(String type1, String type2) throws CaesiumException {
         if ("java/lang/Object".equals(type1))
             return true;
+
         if (type1.equals(type2))
             return true;
 
         returnClazz(type1);
         returnClazz(type2);
         ClassTree firstTree = getTree(type1);
-        if (firstTree == null) {
+
+        if (firstTree == null)
             throw new CaesiumException("Could not find " + type1 + " in the built class hierarchy", null);
-        }
+
         Set<String> allChildren = new HashSet<>();
         Deque<String> toProcess = new ArrayDeque<>(firstTree.subClasses);
         while (!toProcess.isEmpty()) {
