@@ -30,4 +30,4 @@ If you want to join the discord for Caesium to talk, ask questions or anything t
 ## Special thanks to
 ![yourkit logo](https://www.yourkit.com/images/yklogo.png)
 
-[YourKit](https://www.yourkit.com/) is the creator of <a href="https://www.yourkit.com/java/profiler/">YourKit Java Profiler</a>, <a href="https://www.yourkit.com/.net/profiler/">YourKit .NET Profiler</a>, and <a href="https://www.yourkit.com/youmonitor/">YourKit YouMonitor</a>. They support open source projects with their fully featured application profilers.
+[YourKit](https://www.yourkit.com/) is the creator of <a href="https://www.yourkit.com/java/profiler/">YourKit Java Profiler</a>, <a href="https://www.yourkit.com/.net/profiler/">YourKit .NET Profiler</a>, and <a href="https://www.yourkit.com/youmonitor/">YourKit YouMonitor</a>. They support open source projects with their fully featured application profilers. It's used to ensure that this project will be as fast as possible.
