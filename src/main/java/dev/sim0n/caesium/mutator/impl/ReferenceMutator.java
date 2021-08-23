@@ -90,7 +90,6 @@ public class ReferenceMutator extends ClassMutator {
 
                                 newSig = Type.getMethodDescriptor(origReturnType, args);
 
-
                                 switch (opcode) {
                                     case INVOKEVIRTUAL:
                                     case INVOKESTATIC:

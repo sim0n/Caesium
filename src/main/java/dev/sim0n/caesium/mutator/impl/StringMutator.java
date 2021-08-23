@@ -1,5 +1,6 @@
 package dev.sim0n.caesium.mutator.impl;
 
+import com.google.common.base.Charsets;
 import dev.sim0n.caesium.mutator.ClassMutator;
 import dev.sim0n.caesium.util.ASMUtil;
 import dev.sim0n.caesium.util.StringUtil;
@@ -12,6 +13,7 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 import javax.crypto.spec.IvParameterSpec;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -28,6 +30,8 @@ public class StringMutator extends ClassMutator {
     private String stringField2 = getRandomName();
     private String keyField = getRandomName();
     private String decryptMethodName = getRandomName();
+
+    private String initName;
 
     private String bsmName = getRandomName();
     private String bsmSig = "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;)Ljava/lang/Object;";
@@ -58,6 +62,7 @@ public class StringMutator extends ClassMutator {
         keyField = getRandomName();
 
         decryptMethodName = getRandomName();
+        initName = getRandomName();
 
         bsmName = getRandomName();
         bsmHandle = new Handle(H_INVOKESTATIC, target.name, bsmName, bsmSig);
@@ -195,7 +200,7 @@ public class StringMutator extends ClassMutator {
 
             instance.init(Cipher.ENCRYPT_MODE, keyFactory.generateSecret(new DESKeySpec(keys)), new IvParameterSpec(new byte[8]));
 
-            return new String(Base64.getEncoder().encode(instance.doFinal((s.getBytes()))));
+            return new String(Base64.getEncoder().encode(instance.doFinal(s.getBytes(Charsets.UTF_8))));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -437,13 +442,13 @@ public class StringMutator extends ClassMutator {
 
         LabelNode l2 = new LabelNode();
         instructions.add(l2);
-        instructions.add(new MethodInsnNode(INVOKESTATIC, owner.name, "_init", "()V", false));
+        instructions.add(new MethodInsnNode(INVOKESTATIC, owner.name, initName, "()V", false));
 
         return instructions;
     }
 
     public MethodNode makeInit(ClassNode owner) {
-        MethodNode mv = new MethodNode(ACC_PRIVATE + ACC_STATIC, "_init","()V", null,null);
+        MethodNode mv = new MethodNode(ACC_PRIVATE + ACC_STATIC, initName,"()V", null,null);
 
         mv.visitCode();
         Label l0 = new Label();
@@ -602,8 +607,9 @@ public class StringMutator extends ClassMutator {
         mv.visitLabel(l19);
         mv.visitLineNumber(126, l19);
         mv.visitFrame(F_SAME, 0, null, 0, null);
+        // TODO: this can break classes with huge amount of strings
         // generate completely random fake strings
-        for (int i = 0; i < stringCount * ThreadLocalRandom.current().nextInt(5, 20); i++) {
+        for (int i = 0; i < 1; i++) {
             mv.visitFieldInsn(GETSTATIC, owner.name, stringField2, "[Ljava/lang/String;");
 
             ASMUtil.visitOptimisedInt(mv, i);
@@ -620,7 +626,7 @@ public class StringMutator extends ClassMutator {
         mv.visitLineNumber(130, l21);
         mv.visitFrame(F_SAME, 0, null, 0, null);
         // generate completely random fake strings
-        for (int i = 0; i < Math.min(5, stringCount) * ThreadLocalRandom.current().nextInt(5, 20); i++) {
+        for (int i = 0; i < 1; i++) {
             mv.visitFieldInsn(GETSTATIC, owner.name, stringField2, "[Ljava/lang/String;");
 
             ASMUtil.visitOptimisedInt(mv, i);
