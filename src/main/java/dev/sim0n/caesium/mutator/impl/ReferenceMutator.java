@@ -4,13 +4,15 @@ import com.google.common.base.Strings;
 import dev.sim0n.caesium.mutator.ClassMutator;
 import dev.sim0n.caesium.util.wrapper.impl.ClassWrapper;
 import dev.sim0n.caesium.util.wrapper.impl.MethodWrapper;
-import org.objectweb.asm.*;
+import org.objectweb.asm.Handle;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
-import javax.xml.bind.DatatypeConverter;
+import java.util.Base64;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.jar.Manifest;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -42,6 +44,7 @@ public class ReferenceMutator extends ClassMutator {
             return;
 
         AtomicBoolean appliedInvoke = new AtomicBoolean(false);
+        Base64.Encoder base64Encoder = Base64.getEncoder();
 
         opcodeRandomKeyName = getRandomName();
         opcodeComparisonRandomKeyName = getRandomName();
@@ -97,8 +100,8 @@ public class ReferenceMutator extends ClassMutator {
                                         Object[] params = new Object[4 + extraParamsCount];
 
                                         params[0] = extraParamsCount != 0 ? (opcode ^ opcodeRandomKey) : opcode;
-                                        params[1] = DatatypeConverter.printBase64Binary(insn.owner.replaceAll("/", ".").getBytes());
-                                        params[2] = DatatypeConverter.printBase64Binary(insn.name.getBytes());
+                                        params[1] = base64Encoder.encodeToString(insn.owner.replaceAll("/", ".").getBytes());
+                                        params[2] = base64Encoder.encodeToString(insn.name.getBytes());
                                         params[3] = insn.desc;
 
                                         // generate random parameter objects
@@ -193,7 +196,7 @@ public class ReferenceMutator extends ClassMutator {
                 return random.nextDouble() * 20F;
 
             case 9:
-                return DatatypeConverter.printBase64Binary(getRandomName().getBytes());
+                return Base64.getEncoder().encodeToString(getRandomName().getBytes());
 
             case 10:
                 return -Math.abs(random.nextInt());
@@ -232,9 +235,10 @@ public class ReferenceMutator extends ClassMutator {
         mv.visitLineNumber(304, l3);
         mv.visitTypeInsn(NEW, "java/lang/String");
         mv.visitInsn(DUP);
+        mv.visitMethodInsn(INVOKESTATIC, "java/util/Base64", "getDecoder", "()Ljava/util/Base64$Decoder;", false);
         mv.visitVarInsn(ALOAD, 4);
         mv.visitTypeInsn(CHECKCAST, "java/lang/String");
-        mv.visitMethodInsn(INVOKESTATIC, "javax/xml/bind/DatatypeConverter", "parseBase64Binary", "(Ljava/lang/String;)[B", false);
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/util/Base64$Decoder", "decode", "(Ljava/lang/String;)[B", false);
         mv.visitMethodInsn(INVOKESPECIAL, "java/lang/String", "<init>", "([B)V", false);
         mv.visitMethodInsn(INVOKESTATIC, "java/lang/Class", "forName", "(Ljava/lang/String;)Ljava/lang/Class;", false);
         mv.visitVarInsn(ASTORE, 9);
@@ -265,9 +269,10 @@ public class ReferenceMutator extends ClassMutator {
         mv.visitVarInsn(ALOAD, 9);
         mv.visitTypeInsn(NEW, "java/lang/String");
         mv.visitInsn(DUP);
+        mv.visitMethodInsn(INVOKESTATIC, "java/util/Base64", "getDecoder", "()Ljava/util/Base64$Decoder;", false);
         mv.visitVarInsn(ALOAD, 5);
         mv.visitTypeInsn(CHECKCAST, "java/lang/String");
-        mv.visitMethodInsn(INVOKESTATIC, "javax/xml/bind/DatatypeConverter", "parseBase64Binary", "(Ljava/lang/String;)[B", false);
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/util/Base64$Decoder", "decode", "(Ljava/lang/String;)[B", false);
         mv.visitMethodInsn(INVOKESPECIAL, "java/lang/String", "<init>", "([B)V", false);
         mv.visitVarInsn(ALOAD, 10);
         mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/invoke/MethodHandles$Lookup", "findStatic", "(Ljava/lang/Class;Ljava/lang/String;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/MethodHandle;", false);
@@ -284,9 +289,10 @@ public class ReferenceMutator extends ClassMutator {
         mv.visitVarInsn(ALOAD, 9);
         mv.visitTypeInsn(NEW, "java/lang/String");
         mv.visitInsn(DUP);
+        mv.visitMethodInsn(INVOKESTATIC, "java/util/Base64", "getDecoder", "()Ljava/util/Base64$Decoder;", false);
         mv.visitVarInsn(ALOAD, 5);
         mv.visitTypeInsn(CHECKCAST, "java/lang/String");
-        mv.visitMethodInsn(INVOKESTATIC, "javax/xml/bind/DatatypeConverter", "parseBase64Binary", "(Ljava/lang/String;)[B", false);
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/util/Base64$Decoder", "decode", "(Ljava/lang/String;)[B", false);
         mv.visitMethodInsn(INVOKESPECIAL, "java/lang/String", "<init>", "([B)V", false);
         mv.visitVarInsn(ALOAD, 10);
         mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/invoke/MethodHandles$Lookup", "findVirtual", "(Ljava/lang/Class;Ljava/lang/String;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/MethodHandle;", false);
@@ -309,9 +315,10 @@ public class ReferenceMutator extends ClassMutator {
         mv.visitLineNumber(35, l0);
         mv.visitTypeInsn(NEW, "java/lang/String");
         mv.visitInsn(DUP);
+        mv.visitMethodInsn(INVOKESTATIC, "java/util/Base64", "getDecoder", "()Ljava/util/Base64$Decoder;", false);
         mv.visitVarInsn(ALOAD, 4);
         mv.visitTypeInsn(CHECKCAST, "java/lang/String");
-        mv.visitMethodInsn(INVOKESTATIC, "javax/xml/bind/DatatypeConverter", "parseBase64Binary", "(Ljava/lang/String;)[B", false);
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/util/Base64$Decoder", "decode", "(Ljava/lang/String;)[B", false);
         mv.visitMethodInsn(INVOKESPECIAL, "java/lang/String", "<init>", "([B)V", false);
         mv.visitMethodInsn(INVOKESTATIC, "java/lang/Class", "forName", "(Ljava/lang/String;)Ljava/lang/Class;", false);
         mv.visitVarInsn(ASTORE, 7);
@@ -347,9 +354,10 @@ public class ReferenceMutator extends ClassMutator {
         mv.visitVarInsn(ALOAD, 7);
         mv.visitTypeInsn(NEW, "java/lang/String");
         mv.visitInsn(DUP);
+        mv.visitMethodInsn(INVOKESTATIC, "java/util/Base64", "getDecoder", "()Ljava/util/Base64$Decoder;", false);
         mv.visitVarInsn(ALOAD, 5);
         mv.visitTypeInsn(CHECKCAST, "java/lang/String");
-        mv.visitMethodInsn(INVOKESTATIC, "javax/xml/bind/DatatypeConverter", "parseBase64Binary", "(Ljava/lang/String;)[B", false);
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/util/Base64$Decoder", "decode", "(Ljava/lang/String;)[B", false);
         mv.visitMethodInsn(INVOKESPECIAL, "java/lang/String", "<init>", "([B)V", false);
         mv.visitVarInsn(ALOAD, 9);
         mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/invoke/MethodHandles$Lookup", "findStatic", "(Ljava/lang/Class;Ljava/lang/String;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/MethodHandle;", false);
@@ -366,9 +374,10 @@ public class ReferenceMutator extends ClassMutator {
         mv.visitVarInsn(ALOAD, 7);
         mv.visitTypeInsn(NEW, "java/lang/String");
         mv.visitInsn(DUP);
+        mv.visitMethodInsn(INVOKESTATIC, "java/util/Base64", "getDecoder", "()Ljava/util/Base64$Decoder;", false);
         mv.visitVarInsn(ALOAD, 5);
         mv.visitTypeInsn(CHECKCAST, "java/lang/String");
-        mv.visitMethodInsn(INVOKESTATIC, "javax/xml/bind/DatatypeConverter", "parseBase64Binary", "(Ljava/lang/String;)[B", false);
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/util/Base64$Decoder", "decode", "(Ljava/lang/String;)[B", false);
         mv.visitMethodInsn(INVOKESPECIAL, "java/lang/String", "<init>", "([B)V", false);
         mv.visitVarInsn(ALOAD, 9);
         mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/invoke/MethodHandles$Lookup", "findVirtual", "(Ljava/lang/Class;Ljava/lang/String;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/MethodHandle;", false);
